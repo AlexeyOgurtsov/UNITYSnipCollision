@@ -12,6 +12,33 @@ public class MyPawn : MonoBehaviour
 	public const float DEFAULT_ROTATION_SPEED_DEGS = 45.0F;
 	#endregion // constants
 
+	#region collision
+	public void OnCollisionEnter2D(Collision2D collision)
+	{
+		MyCollisionUtils.LogCollision2D(MethodBase.GetCurrentMethod().Name, collision);
+	}
+	public void OnCollisionExit2D(Collision2D collision)
+	{
+		MyCollisionUtils.LogCollision2D(MethodBase.GetCurrentMethod().Name, collision);
+	}
+	public void OnCollisionStay2D(Collision2D collision)
+	{
+		MyCollisionUtils.LogCollision2D(MethodBase.GetCurrentMethod().Name, collision);
+	}
+	public void OnTriggerEnter2D(Collider2D collider)
+	{
+		MyCollisionUtils.LogCollider2D(MethodBase.GetCurrentMethod().Name, collider);
+	}
+	public void OnTriggerExit2D(Collider2D collider)
+	{
+		MyCollisionUtils.LogCollider2D(MethodBase.GetCurrentMethod().Name, collider);
+	}
+	public void OnTriggerStay2D(Collider2D collider)
+	{
+		MyCollisionUtils.LogCollider2D(MethodBase.GetCurrentMethod().Name, collider);
+	}
+	#endregion // collision
+
 	#region move methods
 	public void SetMoveDirection(Vector2 direction)
 	{
@@ -20,7 +47,6 @@ public class MyPawn : MonoBehaviour
 
 	public void SetRotationSpeedDegs(float rotationSpeedDegs)
 	{
-		// @TODO: Check degs/radians
 		this.rotationSpeedDegs = rotationSpeedDegs;
 	}
 	#endregion move methods

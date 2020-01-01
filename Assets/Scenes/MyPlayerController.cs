@@ -23,6 +23,7 @@ public class MyPlayerController : MonoBehaviour
 	}
 	#endregion
 
+
 	#region input actions
 	public void InputAction_Thrust(InputAction.CallbackContext context)
 	{
