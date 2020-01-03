@@ -3,6 +3,13 @@ using UnityEngine;
 using System.Reflection;
 using System.Linq;
 
+public enum EMyMoveMethod
+{
+	Transform,
+	RigidbodyMove,
+	RigidbodyVelocity
+}
+
 // Base class of all game objects,
 // controllable by my player controller.
 public class MyPawn : MonoBehaviour
@@ -11,6 +18,42 @@ public class MyPawn : MonoBehaviour
 	public const float DEFAULT_MOVE_SPEED = 3.0F;
 	public const float DEFAULT_ROTATION_SPEED_DEGS = 45.0F;
 	#endregion // constants
+
+	#region movement
+	public bool bUseRigidbodyMove = true;
+	public EMyMoveMethod myMoveMethod = EMyMoveMethod.RigidbodyMove;
+	void MyMoveAndRotate(Vector2 vel, float angularVelocityDegs)
+	{
+		Vector2 deltaPosition = vel * Time.deltaTime;
+		float deltaRotationDegs = rotationSpeedDegs * Time.deltaTime;
+		switch(myMoveMethod)
+		{
+		case EMyMoveMethod.Transform:
+			transform.Rotate(0, 0, deltaRotationDegs);
+			transform.Translate(deltaPosition);
+			return;
+
+		case EMyMoveMethod.RigidbodyMove:
+			if(myRigidbody)
+			{
+				myRigidbody.MovePosition(myRigidbody.position + deltaPosition);
+				myRigidbody.MoveRotation(myRigidbody.rotation + deltaRotationDegs);
+			}
+			return;
+
+		case EMyMoveMethod.RigidbodyVelocity:
+			if(myRigidbody)
+			{
+				myRigidbody.velocity = vel;
+				myRigidbody.angularVelocity = angularVelocityDegs;
+			}
+			return;
+
+		default:
+			break;
+		}
+	}
+	#endregion
 
 	#region collision
 	public void OnCollisionEnter2D(Collision2D collision)
@@ -37,6 +80,7 @@ public class MyPawn : MonoBehaviour
 	{
 		MyCollisionUtils.LogCollider2D(MethodBase.GetCurrentMethod().Name, collider);
 	}
+	Rigidbody2D myRigidbody;
 	#endregion // collision
 
 	#region move methods
@@ -54,8 +98,13 @@ public class MyPawn : MonoBehaviour
 	#region unity messages
 	public void FixedUpdate()
 	{
-		transform.Rotate(0, 0, rotationSpeedDegs * Time.deltaTime);
-		transform.Translate(this.moveDirection * Time.deltaTime * DEFAULT_MOVE_SPEED);
+		Vector2 vel = this.moveDirection * DEFAULT_MOVE_SPEED;
+		MyMoveAndRotate(vel, rotationSpeedDegs);
+	}
+
+	public void Awake()
+	{
+		myRigidbody = GetComponent<Rigidbody2D>();
 	}
 	#endregion // unity messages
 
